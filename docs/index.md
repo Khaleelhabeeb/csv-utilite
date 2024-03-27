@@ -1,52 +1,59 @@
-CSV-UTILS DOCUMENTATION
-Overview
+# CSV-UTILS DOCUMENTATION
+
 csv-util is a Python package designed to facilitate working with CSV files in a more convenient and Pythonic manner compared to the built-in csv module. It provides a set of modules with classes and functions to perform various tasks related to CSV file handling.
 
-Installation
+## Installation
+
 You can install csv-util via pip:
 
-pip install csv-utils
+```pip install csv-utils ```
 
-CORE MODULES
+## CORE MODULES
 
-Reader
+### Reader
+
 This module contains the Reader class, which extends the functionality of csv.reader. It offers additional features such as automatic type casting, handling missing values, and support for different dialects.
 
-from csv_util.reader import Reader
+``` from csv_util.reader import Reader ```
 
-# Example usage
-
-from csv_utils.reader import Reader
+### Example usage
+```python
+from csv_utils.reader import Reader 
 
 with open('kano.csv', 'r') as file:
   reader = Reader(file, dialect='excel', type_cast=True, na_values=['', 'NULL'])
   for row in reader:
-    print(row)
+    print(row)  
 
-Writer
+```
+   
+
+### Writer
+
 The writer.py module includes the Writer class, a subclass of csv.writer, enhanced with features like automatic type casting and support for different dialects.
 
-from csv_util.writer import Writer
-
-# Example usage
-
+``` from csv_util.writer import Writer ```
+ 
+### Example usage
+```python
 from csv_utils.writer import Writer
 with open('output.csv', 'w', newline='') as file:
     writer = Writer(file, dialect='excel', na_rep='NA')
     writer.writerow([1, 2.5, True, None, 'abc'])
     writer.writerows([[3, 4.7, False, 'NA', ''], [None, None, True, 'NA', 'xyz']])
 
+```
+## UTILITY MODULES
 
-UTILITY MODULES
+### Manipulation
 
-Manipulation
 This module provides functions for common operations on CSV data, such as filtering rows, sorting, merging multiple files, and handling headers.
 
 
-from csv_util.manipulation import filter_rows, sort_rows
+``` from csv_util.manipulation import filter_rows, sort_rows ```
 
-# Example usage
-
+### Example usage
+```python
 from csv_utils.manipulation import filter_rows, sort_rows, merge_files  
 # Filter rows
 data = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
@@ -62,15 +69,18 @@ file_paths = ['file1.csv', 'file2.csv', 'file3.csv']
 output_path = 'merged.csv'
 merge_files(file_paths, output_path, dialect='excel', has_header=True)
 
+```
 
-Formatting
+### Formatting
+
 formatting.py includes functions for formatting CSV data, such as adding or removing quotes, handling newlines within fields, and customizing delimiters.
 
 
-from csv_util.formatting import add_quotes, remove_quotes
+``` from csv_util.formatting import add_quotes, remove_quotes ```
 
-# Example usage
+### Example usage
 
+```python
 import csv
 from csv_utils.formating import quote_fields, remove_quotes, handle_newlines
 
@@ -89,14 +99,18 @@ data = [['Name', 'Address'], ['John', '123 Main St.\nNew York, NY'], ['Jane', 'F
 formatted_data = handle_newlines(data, replacement=' ')
 print(formatted_data)  # Output: [['Name', 'Address'], ['John', '123 Main St. New York, NY'], ['Jane', 'Flat 5 London, UK']]
 
+```
 
-Validation
+
+### Validation
+
 The validation.py module provides functions to validate CSV data against predefined rules or schemas, ensuring data integrity and consistency.
 
-from csv_util.validation import validate_schema
+``` from csv_util.validation import validate_schema ```
 
-# Example usage
+### Example usage
 
+```python
 from csv_utils.validation import validate_rows, validate_headers
 # Validate rows
 data = [[1, 2, 3], [4, 'five', 6], [7, 8, 'nine']]
@@ -114,15 +128,19 @@ required_headers = ['Name', 'Age', 'City']
 is_valid = validate_headers(headers, required_headers)
 print(is_valid)  # Output: True
 
+```
 
-Conversion
+
+### conversion
+
 This module contains functions to convert CSV data to and from other formats like JSON, Excel, SQL tables, etc.
 
 
-from csv_util.conversion import csv_to_json, json_to_csv
+``` from csv_util.conversion import csv_to_json, json_to_csv ```
 
-# Example usage
+### Example usage
 
+```pyhton 
 from csv_utils.conversion import csv_to_json, json_to_csv
 # CSV to JSON
 data = [['Name', 'Age', 'City'], ['John', 25, 'New York'], ['Jane', 30, 'London']]
@@ -134,8 +152,10 @@ json_data = [{'Name': 'John', 'Age': 25, 'City': 'New York'}, {'Name': 'Jane', '
 csv_data = json_to_csv(json_data, headers=['Name', 'Age', 'City'])
 print(csv_data)  # Output: [['Name', 'Age', 'City'], ['John', 25, 'New York'], ['Jane', 30, 'London']]
 
+```
 
-Generation
+### Generation
+
 The generation.py module includes functions to generate CSV files from various data sources, such as dictionaries, databases, or APIs.
 
 
@@ -143,7 +163,12 @@ from csv_util.generation import generate_from_dict
 
 # Example usage
 
+``` from csv_utils.generation import generate_from_db, generate_from_dict ```
+
+```python
+
 from csv_utils.generation import generate_from_db, generate_from_dict
+
 # Generate CSV from a dictionary
 data = {'Name': 'John', 'Age': 25, 'City': 'New York'}
 output_path = 'output.csv'
@@ -161,7 +186,9 @@ db_connection =  ...# ... (initialize database connection)
 output_path = 'output.csv'
 generate_from_db(query, db_connection, output_path)
 
-Conclusion
+```
+
+# Conclusion
 csv-util simplifies CSV file handling in Python by providing a comprehensive set of classes and functions for reading, writing, manipulating, formatting, validating, converting, and generating CSV data. With its intuitive API and enhanced features, csv-util is a valuable tool for data processing tasks involving CSV files.
 
 

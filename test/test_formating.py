@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from typing import Iterable, Any, List, Optional
 import csv
-from csv_utils.formating import quote_fields, remove_quotes, handle_newlines
+from csv_utilite.formating import quote_fields, remove_quotes, handle_newlines
 
 
 class CSVUtilsTest(unittest.TestCase):

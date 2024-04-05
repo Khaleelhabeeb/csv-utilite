@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 from typing import Iterable, Any, Union, List, Dict, Optional
 import csv
 import json
-from csv_utils.conversion import csv_to_json, json_to_csv
+from csv_utilite.conversion import csv_to_json, json_to_csv
 
 class CSVUtilsTest(unittest.TestCase):
 

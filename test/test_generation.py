@@ -2,7 +2,7 @@ import unittest
 import os
 import tempfile
 from unittest.mock import patch, MagicMock
-from csv_utils.generation import generate_from_dict, generate_from_db
+from csv_utilities.generation import generate_from_dict, generate_from_db
 
 class TestGenerationModule(unittest.TestCase):
     def setUp(self):

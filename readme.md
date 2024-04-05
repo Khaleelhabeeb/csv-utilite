@@ -14,13 +14,13 @@ You can install csv-utilite via pip:
 
 This module contains the Reader class, which extends the functionality of csv.reader. It offers additional features such as automatic type casting, handling missing values, and support for different dialects.
 
-``` from csv_utilite.reader import Reader ```
+``` from csv_utilite import Reader ```
 
 ### Example usage
 ```python
-from csv_utilite.reader import Reader 
+from csv_utilite import Reader 
 
-with open('kano.csv', 'r') as file:
+with open('myfile.csv', 'r') as file:
   reader = Reader(file, dialect='excel', type_cast=True, na_values=['', 'NULL'])
   for row in reader:
     print(row)  
@@ -32,11 +32,11 @@ with open('kano.csv', 'r') as file:
 
 The writer.py module includes the Writer class, a subclass of csv.writer, enhanced with features like automatic type casting and support for different dialects.
 
-``` from csv_utilite.writer import Writer ```
+``` from csv_utilite import Writer ```
  
 ### Example usage
 ```python
-from csv_utilite.writer import Writer
+from csv_utilite import Writer
 with open('output.csv', 'w', newline='') as file:
     writer = Writer(file, dialect='excel', na_rep='NA')
     writer.writerow([1, 2.5, True, None, 'abc'])
@@ -50,19 +50,19 @@ with open('output.csv', 'w', newline='') as file:
 This module provides functions for common operations on CSV data, such as filtering rows, sorting, merging multiple files, and handling headers.
 
 
-``` from csv_utilite.manipulation import filter_rows, sort_rows ```
+``` from csv_utilite import filter_rows, sort_rows ```
 
 ### Example usage
 ```python
-from csv_utilite.manipulation import filter_rows, sort_rows, merge_files  
+from csv_utilite import filter_rows, sort_rows, merge_files  
 # Filter rows
 data = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 filtered_data = filter_rows(data, lambda row: sum(row) > 10)
-print(filtered_data)  # Output: [[7, 8, 9]]
+print(filtered_data)  
 
 # Sort rows
 sorted_data = sort_rows(data, key=lambda row: row[1], reverse=True)
-print(sorted_data)  # Output: [[7, 8, 9], [4, 5, 6], [1, 2, 3]]
+print(sorted_data)  
 
 # Merge files
 file_paths = ['file1.csv', 'file2.csv', 'file3.csv']
@@ -76,28 +76,28 @@ merge_files(file_paths, output_path, dialect='excel', has_header=True)
 formatting.py includes functions for formatting CSV data, such as adding or removing quotes, handling newlines within fields, and customizing delimiters.
 
 
-``` from csv_utilite.formatting import add_quotes, remove_quotes ```
+``` from csv_utilite import add_quotes, remove_quotes ```
 
 ### Example usage
 
 ```python
 import csv
-from csv_utilite.formating import quote_fields, remove_quotes, handle_newlines
+from csv_utilite import quote_fields, remove_quotes, handle_newlines
 
 # Quote fields
 data = [['Name', 'Age', 'City'], ['John', 25, 'New York'], ['Jane', 30, 'London, UK']]
 quoted_data = quote_fields(data, quoting=csv.QUOTE_NONNUMERIC)
-print(quoted_data)  # Output: [['Name', 'Age', '"London, UK"'], ['"John"', '25', '"New York"'], ['"Jane"', '30', '"London, UK"']]
+print(quoted_data)  
 
 # Remove quotes
 quoted_data = [['"Name"', '"Age"', '"City"'], ['"John"', '"25"', '"New York"'], ['"Jane"', '"30"', '"London, UK"']]
 unquoted_data = remove_quotes(quoted_data)
-print(unquoted_data)  # Output: [['Name', 'Age', 'City'], ['John', '25', 'New York'], ['Jane', '30', 'London, UK']]
+print(unquoted_data)  
 
 # Handle newlines
 data = [['Name', 'Address'], ['John', '123 Main St.\nNew York, NY'], ['Jane', 'Flat 5\nLondon, UK']]
 formatted_data = handle_newlines(data, replacement=' ')
-print(formatted_data)  # Output: [['Name', 'Address'], ['John', '123 Main St. New York, NY'], ['Jane', 'Flat 5 London, UK']]
+print(formatted_data) 
 
 ```
 
@@ -106,12 +106,12 @@ print(formatted_data)  # Output: [['Name', 'Address'], ['John', '123 Main St. Ne
 
 The validation.py module provides functions to validate CSV data against predefined rules or schemas, ensuring data integrity and consistency.
 
-``` from csv_utilite.validation import validate_schema ```
+``` from csv_utilite import validate_schema ```
 
 ### Example usage
 
 ```python
-from csv_utilite.validation import validate_rows, validate_headers
+from csv_utilite import validate_rows, validate_headers
 # Validate rows
 data = [[1, 2, 3], [4, 'five', 6], [7, 8, 'nine']]
 validators = {
@@ -120,13 +120,13 @@ validators = {
     2: lambda x: isinstance(x, int) and x < 10
 }
 valid_data = validate_rows(data, validators)
-print(valid_data)  # Output: [[1, 2, 3], [7, 8, 'nine']]
+print(valid_data) 
 
 # Validate headers
 headers = ['Name', 'Age', 'City', 'Country']
 required_headers = ['Name', 'Age', 'City']
 is_valid = validate_headers(headers, required_headers)
-print(is_valid)  # Output: True
+print(is_valid) 
 
 ```
 
@@ -136,22 +136,22 @@ print(is_valid)  # Output: True
 This module contains functions to convert CSV data to and from other formats like JSON, Excel, SQL tables, etc.
 
 
-``` from csv_utilite.conversion import csv_to_json, json_to_csv ```
+``` from csv_utilite import csv_to_json, json_to_csv ```
 
 ### Example usage
 
 ```python
 
-from csv_utilite.conversion import csv_to_json, json_to_csv
+from csv_utilite import csv_to_json, json_to_csv
 # CSV to JSON
 data = [['Name', 'Age', 'City'], ['John', 25, 'New York'], ['Jane', 30, 'London']]
 json_data = csv_to_json(data[1:], headers=data[0], orient='records')
-print(json_data)  # Output: [{'Name': 'John', 'Age': 25, 'City': 'New York'}, {'Name': 'Jane', 'Age': 30, 'City': 'London'}]
+print(json_data)  
 
 # JSON to CSV
 json_data = [{'Name': 'John', 'Age': 25, 'City': 'New York'}, {'Name': 'Jane', 'Age': 30, 'City': 'London'}]
 csv_data = json_to_csv(json_data, headers=['Name', 'Age', 'City'])
-print(csv_data)  # Output: [['Name', 'Age', 'City'], ['John', 25, 'New York'], ['Jane', 30, 'London']]
+print(csv_data)  
 
 ```
 
@@ -160,15 +160,15 @@ print(csv_data)  # Output: [['Name', 'Age', 'City'], ['John', 25, 'New York'], [
 The generation.py module includes functions to generate CSV files from various data sources, such as dictionaries, databases, or APIs.
 
 
-from csv_utilite.generation import generate_from_dict
+``` from csv_utilite import generate_from_dict ```
 
 # Example usage
 
-``` from csv_utilite.generation import generate_from_db, generate_from_dict ```
+``` from csv_utilite import generate_from_db, generate_from_dict ```
 
 ```python
 
-from csv_utilite.generation import generate_from_db, generate_from_dict
+from csv_utilite import generate_from_db, generate_from_dict
 
 # Generate CSV from a dictionary
 data = {'Name': 'John', 'Age': 25, 'City': 'New York'}
@@ -195,4 +195,4 @@ All meaningful contributions are welcome.
 We appreciate any improvements, bug fixes, or new features you can contribute to this project. Feel free to fork this repository, make your changes, and submit a pull request.
 
 # Conclusion
-csv-utilite simplifies CSV file handling in Python by providing a comprehensive set of classes and functions for reading, writing, manipulating, formatting, validating, converting, and generating CSV data. With its intuitive API and enhanced features, csv-util is a valuable tool for data processing tasks involving CSV files.
+csv-utilite simplifies CSV file handling in Python by providing a comprehensive set of classes and functions for reading, writing, manipulating, formatting, validating, converting, and generating CSV data. With its intuitive API and enhanced features, csv-utilite is a valuable tool for data processing tasks involving CSV files.

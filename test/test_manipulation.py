@@ -2,7 +2,7 @@ import unittest
 import csv
 from unittest.mock import patch, MagicMock
 from typing import Iterable, Any, Callable, List, Dict, Optional
-from csv_utilities.manipulation import filter_rows, sort_rows, merge_files 
+from csv_utilite.manipulation import filter_rows, sort_rows, merge_files 
 
 class CSVUtilsTest(unittest.TestCase):
 

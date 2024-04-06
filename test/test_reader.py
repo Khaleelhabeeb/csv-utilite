@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 import csv
 from typing import Iterator, Optional, Any, Union, List, Dict
-from csv_utilities.reader import Reader
+from csv_utilite.reader import Reader
 
 class Reader(Reader):
     """

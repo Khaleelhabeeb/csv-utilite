@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='csv_utilite',
-    version='1.0.0',
+    version='1.0.1',
     description='csv-util is a Python package designed to facilitate working with CSV files in a more convenient and Pythonic manner compared to the built-in csv module.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',

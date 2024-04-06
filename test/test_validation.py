@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 from typing import Iterable, Any, Callable, List, Dict, Optional
-from csv_utilities.validation import validate_rows, validate_headers
+from csv_utilite.validation import validate_rows, validate_headers
 
 class CSVUtilsTest(unittest.TestCase):
 

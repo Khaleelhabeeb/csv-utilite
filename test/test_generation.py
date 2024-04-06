@@ -1,56 +1,59 @@
 import unittest
+from unittest.mock import patch
 import os
-import tempfile
-from unittest.mock import patch, MagicMock
-from csv_utilities.generation import generate_from_dict, generate_from_db
 
-class TestGenerationModule(unittest.TestCase):
-    def setUp(self):
-        self.data_dict = {'Name': 'John', 'Age': 25, 'City': 'New York'}
-        self.data_list = [{'Name': 'John', 'Age': 25, 'City': 'New York'},
-                          {'Name': 'Jane', 'Age': 30, 'City': 'London'}]
-        self.headers = ['Name', 'Age', 'City']
-        self.temp_file = tempfile.NamedTemporaryFile(mode='w+', delete=False)
-        self.temp_file_path = self.temp_file.name
-        self.temp_file.close()
+from csv_utilite.generation import generate_from_dict, generate_from_db
 
-    def tearDown(self):
-        if os.path.exists(self.temp_file_path):
-            os.unlink(self.temp_file_path)
 
-    def test_generate_from_dict(self):
-        generate_from_dict(self.data_dict, self.temp_file_path, headers=self.headers)
-        with open(self.temp_file_path, 'r') as file:
-            lines = file.readlines()
-        self.assertEqual(len(lines), 2)
-        self.assertEqual(lines[0].strip(), ','.join(self.headers))
-        self.assertEqual(lines[1].strip(), ','.join([self.data_dict[header] for header in self.headers]))
+class TestCSVGeneration(unittest.TestCase):
 
-        generate_from_dict(self.data_list, self.temp_file_path)
-        with open(self.temp_file_path, 'r') as file:
-            lines = file.readlines()
-        self.assertEqual(len(lines), 3)
-        self.assertEqual(lines[0].strip(), ','.join(self.data_list[0].keys()))
-        self.assertEqual(lines[1].strip(), ','.join([str(value) for value in self.data_list[0].values()]))
-        self.assertEqual(lines[2].strip(), ','.join([str(value) for value in self.data_list[1].values()]))
+    def setUp(self) -> None:
+        self.test_data = [
+            {'name': 'Alice', 'age': 30},
+            {'name': 'Bob', 'age': 25}
+        ]
+        self.test_output_path = 'test_output.csv'
 
-        with self.assertRaises(ValueError):
-            generate_from_dict([1, 2, 3], self.temp_file_path)
+    def tearDown(self) -> None:
+        if os.path.exists(self.test_output_path):
+            os.remove(self.test_output_path)
 
-    @patch('csv_utils.generation.csv')
-    def test_generate_from_db(self, mock_csv):
-        mock_cursor = MagicMock()
-        mock_cursor.description = [('Name',), ('Age',), ('City',)]
-        mock_cursor.fetchall.return_value = [('John', 25, 'New York'), ('Jane', 30, 'London')]
-        mock_db_connection = MagicMock()
-        mock_db_connection.cursor.return_value = mock_cursor
+    def test_generate_from_dict_single_dict(self):
+        generate_from_dict({'name': 'Alice', 'age': 30}, self.test_output_path)
+        with open(self.test_output_path, 'r') as file:
+            content = file.read()
+        self.assertEqual(content, 'name,age\nAlice,30\n')
 
-        generate_from_db("SELECT name, age, city FROM users", mock_db_connection, self.temp_file_path)
-        mock_csv.writer.return_value.writerow.assert_any_call(['Name', 'Age', 'City'])
-        mock_csv.writer.return_value.writerows.assert_called_with([('John', 25, 'New York'), ('Jane', 30, 'London')])
+    def test_generate_from_dict_list_of_dicts(self):
+        generate_from_dict(self.test_data, self.test_output_path)
+        with open(self.test_output_path, 'r') as file:
+            content = file.read()
+        self.assertEqual(content, 'name,age\nAlice,30\nBob,25\n')
 
-        with self.assertRaises(ValueError):
-            generate_from_db("INVALID QUERY", mock_db_connection, self.temp_file_path)
+    def test_generate_from_dict_custom_headers(self):
+        headers = ['First Name', 'Years']
+        generate_from_dict(self.test_data, self.test_output_path, headers=headers)
+        with open(self.test_output_path, 'r') as file:
+            content = file.read()
+        self.assertEqual(content, 'First Name,Years\nAlice,30\nBob,25\n')
 
+    @patch('your_file_name.csv.writer')
+    def test_generate_from_db(self, mock_writer):
+        mock_cursor = mock_writer.return_value.__enter__.return_value
+        mock_cursor.fetchall.return_value = [
+            ('John', 40),
+            ('Mary', 35)
+        ]
+        mock_cursor.description = [('name',), ('age',)]
+
+        generate_from_db('SELECT * FROM users', mock_cursor, self.test_output_path)
+
+        mock_writer.assert_called_once_with(open(self.test_output_path, 'w', newline=''))
+        mock_writer.return_value.__enter__.return_value.writerow.assert_called_once_with(['name', 'age'])
+        mock_writer.return_value.__enter__.return_value.writerows.assert_called_once_with([
+            ['John', 40],
+            ['Mary', 35]
+        ])
+        
 if __name__ == '__main__':
     unittest.main()

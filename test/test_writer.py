@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 import csv
 from typing import Iterable, Any, Union, Optional
-from csv_utilities.writer import Writer
+from csv_utilite.writer import Writer
 
 
 class Writer(Writer):

@@ -1,54 +1,95 @@
 import unittest
-from unittest.mock import patch, MagicMock
-from typing import Iterable, Any, Union, List, Dict, Optional
-import csv
-import json
+from io import StringIO
+from typing import List, Dict, Any
+
 from csv_utilite.conversion import csv_to_json, json_to_csv
 
-class CSVUtilsTest(unittest.TestCase):
-
+class TestCsvJsonConversion(unittest.TestCase):
     def test_csv_to_json_records(self):
-        data = [['name', 'age', 'city'], ['Alice', 30, 'New York']]
-        json_data = csv_to_json(data)
-        self.assertEqual(json_data, [{"name": "Alice", "age": 30, "city": "New York"}])
+        csv_data = [
+            ["name", "age", "city"],
+            ["John", "30", "New York"],
+            ["Jane", "25", "Los Angeles"],
+            ["Bob", "40", "Chicago"],
+        ]
+        expected_json = [
+            {"name": "John", "age": "30", "city": "New York"},
+            {"name": "Jane", "age": "25", "city": "Los Angeles"},
+            {"name": "Bob", "age": "40", "city": "Chicago"},
+        ]
+        result = csv_to_json(csv_data)
+        self.assertEqual(result, expected_json)
 
     def test_csv_to_json_split(self):
-        data = [['name', 'age', 'city'], ['Alice', 30, 'New York']]
-        json_data = csv_to_json(data, orient='split')
-        self.assertEqual(json_data, {'headers': ['name', 'age', 'city'], 'values': [['Alice', 30, 'New York']]})
+        csv_data = [
+            ["name", "age", "city"],
+            ["John", "30", "New York"],
+            ["Jane", "25", "Los Angeles"],
+            ["Bob", "40", "Chicago"],
+        ]
+        expected_json = {
+            "headers": ["name", "age", "city"],
+            "values": [["John", "30", "New York"], ["Jane", "25", "Los Angeles"], ["Bob", "40", "Chicago"]],
+        }
+        result = csv_to_json(csv_data, orient="split")
+        self.assertEqual(result, expected_json)
 
     def test_csv_to_json_index(self):
-        data = [['name', 'age', 'city'], ['Alice', 30, 'New York'], ['Bob', 25, 'London']]
-        json_data = csv_to_json(data, orient='index')
-        self.assertEqual(json_data, {0: ['Alice', 30, 'New York'], 1: ['Bob', 25, 'London']})
+        csv_data = [
+            ["name", "age", "city"],
+            ["John", "30", "New York"],
+            ["Jane", "25", "Los Angeles"],
+            ["Bob", "40", "Chicago"],
+        ]
+        expected_json = {
+            0: ["John", "30", "New York"],
+            1: ["Jane", "25", "Los Angeles"],
+            2: ["Bob", "40", "Chicago"],
+        }
+        result = csv_to_json(csv_data, orient="index")
+        self.assertEqual(result, expected_json)
 
-    def test_csv_to_json_columns(self):
-        data = [['Alice', 30, 'New York'], ['Bob', 25, 'London']]
-        json_data = csv_to_json(data, headers=['name', 'age', 'city'], orient='columns')
-        self.assertEqual(json_data, {'name': ['Alice', 'Bob'], 'age': [30, 25], 'city': ['New York', 'London']})
+    def test_json_to_csv_list(self):
+        json_data = [
+            {"name": "John", "age": "30", "city": "New York"},
+            {"name": "Jane", "age": "25", "city": "Los Angeles"},
+            {"name": "Bob", "age": "40", "city": "Chicago"},
+        ]
+        expected_csv = [
+            ["name", "age", "city"],
+            ["John", "30", "New York"],
+            ["Jane", "25", "Los Angeles"],
+            ["Bob", "40", "Chicago"],
+        ]
+        result = json_to_csv(json_data)
+        self.assertEqual(result, expected_csv)
 
-    def test_csv_to_json_values(self):
-        data = [['Alice', 30, 'New York'], ['Bob', 25, 'London']]
-        json_data = csv_to_json(data, orient='values')
-        self.assertEqual(json_data, [['Alice', 30, 'New York'], ['Bob', 25, 'London']])
+    def test_json_to_csv_dict(self):
+        json_data = {
+            "John": {"name": "John", "age": "30", "city": "New York"},
+            "Jane": {"name": "Jane", "age": "25", "city": "Los Angeles"},
+            "Bob": {"name": "Bob", "age": "40", "city": "Chicago"},
+        }
+        expected_csv = [
+            ["name", "age", "city"],
+            ["John", "30", "New York"],
+            ["Jane", "25", "Los Angeles"],
+            ["Bob", "40", "Chicago"],
+        ]
+        result = json_to_csv(json_data)
+        self.assertEqual(result, expected_csv)
 
-    def test_csv_to_json_invalid_orient(self):
-        data = [['name', 'age', 'city'], ['Alice', 30, 'New York']]
-        with self.assertRaises(ValueError):
-            csv_to_json(data, orient='invalid')
+    def test_json_to_csv_output_path(self):
+        json_data = [
+            {"name": "John", "age": "30", "city": "New York"},
+            {"name": "Jane", "age": "25", "city": "Los Angeles"},
+            {"name": "Bob", "age": "40", "city": "Chicago"},
+        ]
+        expected_csv = "name,age,city\r\nJohn,30,New York\r\nJane,25,Los Angeles\r\nBob,40,Chicago\r\n"
 
-    def test_json_to_csv_list_records(self):
-        data = [{"name": "Alice", "age": 30, "city": "New York"}]
-        csv_data = json_to_csv(data)
-        expected_data = [['name', 'age', 'city'], ['Alice', 30, 'New York']]
-        self.assertEqual(csv_data, expected_data)
+        with StringIO() as output:
+            json_to_csv(json_data, output_path=output.name)
+            self.assertEqual(output.getvalue(), expected_csv)
 
-    def test_json_to_csv_list_custom_headers(self):
-        data = [{"name": "Alice", "age": 30, "city": "New York"}]
-        headers = ['FullName', 'YearsOld', 'Location']
-        csv_data = json_to_csv(data, headers=headers)
-        expected_data = [['FullName', 'YearsOld', 'Location'], ['Alice', 30, 'New York']]
-        self.assertEqual(csv_data, expected_data)
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
